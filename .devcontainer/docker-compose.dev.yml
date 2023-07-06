@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  workspace:
+    container_name: oci_policy_devcon_workspace
+
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.dev
+
+    environment:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+      CONTAINER_WORKSPACE_FOLDER: ${containerWorkspaceFolder}
+      GIT_USER_NAME: ApexCaptain
+      GIT_USER_EMAIL: ayteneve93@gmail.com
+
+    volumes:
+      - ..:${containerWorkspaceFolder}:cached
+      - Oci-Policy-node_modules:${containerWorkspaceFolder}/node_modules
+
+    command: sleep infinity
+
+volumes:
+  Oci-Policy-node_modules:
