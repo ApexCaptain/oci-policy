@@ -1,37 +1,38 @@
 {
-    // Basic
-    "name": "Oci.Policy Dev Container",
-    "dockerComposeFile": "docker-compose.dev.yml",
-    "service": "workspace",
-    "workspaceFolder": "/home/vscode/${localWorkspaceFolderBasename}",
-    "remoteEnv": {
-      "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  // Basic
+  "name": "Oci.Policy Dev Container",
+  "dockerComposeFile": "docker-compose.dev.yml",
+  "service": "workspace",
+  "workspaceFolder": "/home/vscode/${localWorkspaceFolderBasename}",
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
+  // Featuring
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "16"
     },
-    // Featuring
-    "features": {
-      "ghcr.io/devcontainers/features/node:1": {
-        "version": "18"
-      },
-      "ghcr.io/devcontainers/features/github-cli:1": {}
-    },
-  
-    // Custom
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          "PKief.material-icon-theme",
-          "dbaeumer.vscode-eslint",
-          "editorconfig.editorconfig",
-          "hoovercj.vscode-power-mode",
-          "esbenp.prettier-vscode",
-          "github.vscode-github-actions",
-          "ms-azuretools.vscode-docker"
-        ]
-      }
-    },
-  
-    // LifeCycles
-    "initializeCommand": "echo containerWorkspaceFolder=${containerWorkspaceFolder} > .devcontainer/.env",
-    "postCreateCommand": "sudo find ${containerWorkspaceFolder} \\( -name node_modules \\) -not \\( -path '*/node_modules/*/node_modules' \\) -exec chown vscode:vscode {} \\; && bash ./.devcontainer/commands/postCreateCommand.sh"
-  }
-  
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+    // "ghcr.io/devcontainers/features/python:1": {}
+  },
+
+  // Custom
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "PKief.material-icon-theme",
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig",
+        "hoovercj.vscode-power-mode",
+        "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+
+  // LifeCycles
+  "initializeCommand": "echo containerWorkspaceFolder=${containerWorkspaceFolder} > .devcontainer/.env",
+  "postCreateCommand": "sudo find ${containerWorkspaceFolder} \\( -name node_modules \\) -not \\( -path '*/node_modules/*/node_modules' \\) -exec chown vscode:vscode {} \\; && bash ./.devcontainer/commands/postCreateCommand.sh"
+}

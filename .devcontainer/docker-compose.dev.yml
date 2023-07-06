@@ -3,11 +3,7 @@ version: '3.8'
 services:
   workspace:
     container_name: oci_policy_devcon_workspace
-
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile.dev
-
+    image: mcr.microsoft.com/devcontainers/base:bullseye
     environment:
       TZ: Asia/Seoul
       NODE_OPTIONS: '--max-old-space-size=4096'

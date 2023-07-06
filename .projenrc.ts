@@ -6,14 +6,13 @@ const branches = {
   main: 'main' as const,
   develop: 'develop' as const,
 };
+const projectName = 'oci-policy';
 
 const project = new cdk.JsiiProject({
   // ProjectOptions
-  name: 'oci-policy',
+  name: projectName,
 
   // TypescriptProjectOptions
-  author: 'ApexCaptain',
-  authorAddress: 'ayteneve93@gmail.com',
   eslintOptions: {
     tsconfigPath: './tsconfig.dev.json',
     dirs: ['src'],
@@ -60,6 +59,17 @@ const project = new cdk.JsiiProject({
     include: ['project/**/*.ts'],
     compilerOptions: {},
   },
+  // GitHubProjectOptions
+  githubOptions: {
+    pullRequestLintOptions: {
+      semanticTitleOptions: {
+        types: ['test', 'feat', 'fix', 'chore'],
+      },
+    },
+  },
+  projenCredentials: GithubCredentials.fromPersonalAccessToken({
+    secret: 'GITHUB_TOKEN',
+  }),
 
   // NodeProjectOptions
   gitignore: ['**/*.env'],
@@ -86,32 +96,22 @@ const project = new cdk.JsiiProject({
     },
   },
   release: true,
-  // GitHubProjectOptions
-  githubOptions: {
-    pullRequestLintOptions: {
-      semanticTitleOptions: {
-        types: ['test', 'feat', 'fix', 'chore'],
-      },
-    },
-  },
-  projenCredentials: GithubCredentials.fromPersonalAccessToken({
-    secret: 'GITHUB_TOKEN',
-  }),
+  releaseToNpm: true,
+  // ReleaseProjectOptions
+  minMajorVersion: 1,
   // JsiiProjectOptions
-  jsiiVersion: '~5.0.0',
+  publishToPypi: {
+    distName: projectName,
+    module: projectName,
+  },
   repositoryUrl: 'https://github.com/ApexCaptain/oci-policy.git',
+  author: 'ApexCaptain',
+  authorAddress: 'ayteneve93@gmail.com',
+
+  jsiiVersion: '~5.0.0',
 });
 
-const modifyEslint = async () => {
-  const eslint = project.eslint;
-  if (!eslint) return;
-  // eslint.addPlugins('json-format');
-};
-
 void (async () => {
-  // Modify eslint
-  await modifyEslint();
-
   // Aux
   const depsAux = new Aux.DependencyAuxiliary(project, {
     jsonDirPath: 'data/deps',

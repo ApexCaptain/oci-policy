@@ -15,5 +15,6 @@
   "parens",
   "projen",
   "projenrc",
+  "pypi",
   "tsconfig"
 ]
