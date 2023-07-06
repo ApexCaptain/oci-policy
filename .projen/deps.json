@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@types/flat",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
@@ -17,6 +21,10 @@
     {
       "name": "@typescript-eslint/parser",
       "version": "^5",
+      "type": "build"
+    },
+    {
+      "name": "deepmerge",
       "type": "build"
     },
     {
@@ -40,8 +48,20 @@
       "type": "build"
     },
     {
+      "name": "eslint-plugin-spellcheck",
+      "type": "build"
+    },
+    {
       "name": "eslint",
       "version": "^8",
+      "type": "build"
+    },
+    {
+      "name": "flat",
+      "type": "build"
+    },
+    {
+      "name": "flatley",
       "type": "build"
     },
     {

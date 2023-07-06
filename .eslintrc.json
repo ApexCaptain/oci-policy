@@ -8,7 +8,8 @@
   "plugins": [
     "@typescript-eslint",
     "import",
-    "prettier"
+    "prettier",
+    "spellcheck"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -52,6 +53,7 @@
       "error",
       {
         "devDependencies": [
+          "**/project/**",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],
@@ -121,6 +123,38 @@
           "field",
           "constructor",
           "method"
+        ]
+      }
+    ],
+    "spellcheck/spell-checker": [
+      "warn",
+      {
+        "skipWords": [
+          "fs",
+          "deepmerge",
+          "outdir",
+          "dic",
+          "vscode",
+          "flatley",
+          "bitwise ",
+          "ini",
+          "ayteneve93",
+          "cdk",
+          "devdirs",
+          "esbenp",
+          "fallthrough",
+          "formatter",
+          "gitignore",
+          "gmail",
+          "interop",
+          "javascript",
+          "jsii",
+          "kimbie",
+          "oci",
+          "parens",
+          "projen",
+          "projenrc",
+          "tsconfig"
         ]
       }
     ]

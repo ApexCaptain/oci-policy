@@ -9,6 +9,7 @@ services:
       dockerfile: .devcontainer/Dockerfile.dev
 
     environment:
+      TZ: Asia/Seoul
       NODE_OPTIONS: '--max-old-space-size=4096'
       CONTAINER_WORKSPACE_FOLDER: ${containerWorkspaceFolder}
       GIT_USER_NAME: ApexCaptain

@@ -1,7 +1,7 @@
-import { cdk, javascript } from 'projen';
+import { JsonFile, cdk, javascript } from 'projen';
 import { GithubCredentials } from 'projen/lib/github';
 import { ArrowParens } from 'projen/lib/javascript';
-
+import * as Aux from './project';
 const branches = {
   main: 'main' as const,
   develop: 'develop' as const,
@@ -17,8 +17,9 @@ const project = new cdk.JsiiProject({
   eslintOptions: {
     tsconfigPath: './tsconfig.dev.json',
     dirs: ['src'],
-    devdirs: [],
+    devdirs: ['project'],
     ignorePatterns: ['/**/node_modules'],
+
     prettier: true,
   },
   projenrcTs: true,
@@ -30,6 +31,7 @@ const project = new cdk.JsiiProject({
       experimentalDecorators: true,
       inlineSourceMap: true,
       inlineSources: true,
+      sourceMap: true,
       lib: ['es2019'],
       module: 'CommonJS',
       noEmitOnError: false,
@@ -37,8 +39,8 @@ const project = new cdk.JsiiProject({
       noImplicitAny: true,
       noImplicitReturns: true,
       noImplicitThis: true,
-      noUnusedLocals: true,
-      noUnusedParameters: true,
+      noUnusedLocals: false,
+      noUnusedParameters: false,
       resolveJsonModule: true,
       strict: true,
       strictNullChecks: true,
@@ -48,21 +50,21 @@ const project = new cdk.JsiiProject({
       emitDecoratorMetadata: true,
       allowSyntheticDefaultImports: true,
       outDir: './dist',
-      baseUrl: './',
+      baseUrl: '.',
       skipLibCheck: true,
       forceConsistentCasingInFileNames: false,
     },
   },
 
   tsconfigDev: {
-    include: [],
+    include: ['project/**/*.ts'],
     compilerOptions: {},
   },
 
   // NodeProjectOptions
   gitignore: ['**/*.env'],
   deps: [],
-  devDeps: [],
+  devDeps: ['flat', 'flatley', '@types/flat', 'deepmerge'],
   defaultReleaseBranch: branches.main,
   depsUpgrade: true,
   depsUpgradeOptions: {
@@ -99,4 +101,42 @@ const project = new cdk.JsiiProject({
   jsiiVersion: '~5.0.0',
   repositoryUrl: 'https://github.com/ApexCaptain/oci-policy.git',
 });
-project.synth();
+
+const modifyEslint = async () => {
+  const eslint = project.eslint;
+  if (!eslint) return;
+  // eslint.addPlugins('json-format');
+};
+
+void (async () => {
+  // Modify eslint
+  await modifyEslint();
+
+  // Aux
+  const depsAux = new Aux.DependencyAuxiliary(project, {
+    jsonDirPath: 'data/deps',
+    fileNamePrefix: project.name,
+  });
+  await depsAux.process();
+
+  const dicAux = new Aux.DictionaryAuxiliary(project, {
+    jsonDirPath: 'data/dic',
+    fileNamePrefixes: [project.name, 'projen'],
+  });
+  await dicAux.process();
+
+  const vscodeSettingsAux = new Aux.VsCodeSettingsAuxiliary(project, {
+    settings: {
+      editor: {
+        defaultFormatter: 'esbenp.prettier-vscode',
+      },
+      workbench: {
+        colorTheme: 'Kimbie Dark',
+      },
+    },
+  });
+  await vscodeSettingsAux.process();
+
+  // Synthesize
+  project.synth();
+})();

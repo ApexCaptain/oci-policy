@@ -24,7 +24,8 @@
           "editorconfig.editorconfig",
           "hoovercj.vscode-power-mode",
           "esbenp.prettier-vscode",
-          "github.vscode-github-actions"
+          "github.vscode-github-actions",
+          "ms-azuretools.vscode-docker"
         ]
       }
     },
