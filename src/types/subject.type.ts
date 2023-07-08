@@ -1,4 +1,4 @@
-export type Subject =
+export type SubjectType =
   | 'any-user'
   | 'group'
   | 'group id'

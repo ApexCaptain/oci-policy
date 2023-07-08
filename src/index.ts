@@ -1,134 +1,129 @@
-import { Subject, Verb, Location } from './types';
+import * as types from './types';
+
+interface OciPolicyToStatementOption {
+  pretty: boolean;
+  tabWidth: number;
+}
+const defaultOciPolicyToStatementOption: OciPolicyToStatementOption = {
+  pretty: true,
+  tabWidth: 2,
+};
+
+interface OciPolicyConfig {
+  subjectType: types.SubjectType;
+  subjects: string[];
+  locationType: types.LocationType;
+  locationScope: string[];
+  verbType: types.VerbType;
+}
+
+const defaultOciPolicyConfig: OciPolicyConfig = {
+  subjectType: 'any-user',
+  subjects: new Array<string>(),
+  locationType: 'tenancy',
+  locationScope: new Array<string>(),
+  verbType: 'inspect',
+};
 
 class OciPolicy {
-  private subject: Subject = 'any-user';
-  private subjectTargets = new Array<string>();
-  private verb: Verb = 'inspect';
-  private resourceType: string = 'all-resources';
-  private location: Location = 'tenancy';
-  private locationTargets = new Array<string>();
-
-  // Private Methods
-  private get clone() {
-    const clonedOciPolicy = new OciPolicy();
-
-    // Cloning
-    clonedOciPolicy.subject = this.subject;
-    clonedOciPolicy.subjectTargets = this.subjectTargets;
-    clonedOciPolicy.verb = this.verb;
-    clonedOciPolicy.resourceType = this.resourceType;
-    clonedOciPolicy.location = this.location;
-    clonedOciPolicy.locationTargets = this.locationTargets;
-
-    return clonedOciPolicy;
+  private config: OciPolicyConfig;
+  constructor(config?: OciPolicyConfig) {
+    this.config = {
+      ...defaultOciPolicyConfig,
+      ...config,
+    };
   }
 
-  build() {
-    // Input options
-    const pretty = true;
-    const tabWidth = 2;
-
+  toStatement(
+    option?: Omit<OciPolicyToStatementOption, keyof OciPolicyToStatementOption>,
+  ) {
     // Options
-    const useSubjectId = this.subject.includes('id');
+    const { pretty, tabWidth }: OciPolicyToStatementOption = {
+      ...defaultOciPolicyToStatementOption,
+      ...option,
+    };
+    const useSubjectId = this.config.subjectType.includes('id');
     const tab = ' '.repeat(tabWidth);
 
     // Lines
-    const subjectLine = `Allow ${this.subject.replace(' id', '')}`;
-
-    const subjectTargetLines = this.subjectTargets.map(
+    const subjectLine = `Allow ${this.config.subjectType.replace(' id', '')}`;
+    const subjectTargetLines = this.config.subjects.map(
       (eachTarget, index) =>
         `${pretty ? tab : ''}${useSubjectId ? 'id ' : ''}${eachTarget}${
-          index == this.subjectTargets.length - 1 ? '' : ','
+          index == this.config.subjects.length - 1 ? '' : ','
         }`,
     );
     if (subjectTargetLines.length) {
       subjectTargetLines.unshift('');
       subjectTargetLines.push('');
     }
-
-    const verbLine = `to ${this.verb} ${this.resourceType}`;
-
-    const locationLine = `in ${this.location} ${this.locationTargets.join(
-      ':',
-    )}`;
-
+    const verbLine = `to ${this.config.verbType}`;
+    const locationLine = `in ${
+      this.config.locationType
+    } ${this.config.locationScope.join(':')}`;
     const finalStatementLines = [
       subjectLine,
       ...subjectTargetLines,
       verbLine,
       locationLine,
     ];
-
     return finalStatementLines.join(pretty ? '\n' : ' ');
-    /*
-      return `
-    Allow
-
-    ${
-      subject == 'any-user'
-        ? subject
-        : `${subject.type} \n\t${subject.targets.join(', \n\t')}`
-    }
-
-    to ${verb} ${resourceType}
-
-    in ${
-      location == 'tenancy'
-        ? location
-        : `${location.type} ${location.expression}`
-    }
-
-    ${condition ? `where ${condition}` : ''}
-    `.trim();
-    */
   }
 
-  // Methods
-  allow(subject: Subject, ...targets: string[]) {
-    switch (subject) {
+  // Private methods
+  private clone(config: Omit<OciPolicyConfig, keyof OciPolicyConfig>) {
+    return new OciPolicy({
+      ...this.config,
+      ...config,
+    });
+  }
+
+  // Public methods
+  allow(subjectType: types.SubjectType, ...subjects: string[]) {
+    switch (subjectType) {
       case 'any-user':
-        if (targets.length)
-          throw new Error(`Subject '${subject}' cannot have targets.`);
+        if (subjects.length)
+          throw new Error(
+            `Subject '${subjectType}' cannot have extra subjects expression.`,
+          );
         break;
       default:
-        if (!targets.length)
+        if (!subjects.length)
           throw new Error(
-            `Subject '${subject}' should contain at least 1 target.`,
+            `Subject '${subjectType}' requires subjects expression`,
           );
         break;
     }
-
-    const ociPolicy = this.clone;
-    ociPolicy.subject = subject;
-    ociPolicy.subjectTargets = targets;
-    return ociPolicy;
+    return this.clone({
+      subjectType,
+      subjects,
+    });
   }
 
-  to(verb: Verb, resourceType: string) {
-    const ociPolicy = this.clone;
-    ociPolicy.verb = verb;
-    ociPolicy.resourceType = resourceType;
-    return ociPolicy;
+  to(verbType: types.VerbType) {
+    return this.clone({ verbType });
   }
 
-  in(location: Location, ...targets: string[]) {
-    switch (location) {
+  in(locationType: types.LocationType, ...locationScope: string[]) {
+    switch (locationType) {
       case 'tenancy':
-        if (targets.length)
-          throw new Error(`Location '${location}' cannot have targets.`);
+        if (locationScope.length)
+          throw new Error(
+            `Location '${locationType}' cannot have location scope.`,
+          );
         break;
       default:
-        if (!targets.length)
+        if (!locationScope.length)
           throw new Error(
-            `Location '${location}' should contain at least 1 target`,
+            `Location '${locationType}' requires location scope expression.`,
           );
         break;
     }
-
-    const ociPolicy = this.clone;
-    ociPolicy.location = location;
-    ociPolicy.locationTargets = targets;
-    return ociPolicy;
+    return this.clone({
+      locationType,
+      locationScope,
+    });
   }
 }
+
 export default new OciPolicy();

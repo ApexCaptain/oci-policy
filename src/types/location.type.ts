@@ -1,1 +1,1 @@
-export type Location = 'tenancy' | 'compartment' | 'compartment id';
+export type LocationType = 'tenancy' | 'compartment' | 'compartment id';

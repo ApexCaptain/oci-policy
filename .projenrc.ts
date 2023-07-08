@@ -131,7 +131,7 @@ void (async () => {
         defaultFormatter: 'esbenp.prettier-vscode',
       },
       workbench: {
-        colorTheme: 'Kimbie Dark',
+        colorTheme: 'Tomorrow Night Blue',
       },
     },
   });

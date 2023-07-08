@@ -1,9 +1,11 @@
 import OciPolicy from './index';
 
-const p1 = OciPolicy.allow('any-user').in('compartment id', 'qweqwe').build();
-const p2 = OciPolicy.allow('group', 'nameA', 'nameB')
+const p1 = OciPolicy.allow('any-user')
+  .in('compartment id', 'qweqwe', 'asd', 'asd')
+  .toStatement();
+const p2 = OciPolicy.allow('group id', 'nameA', 'nameB')
   .in('compartment', 'q', 'b')
-  .build();
+  .toStatement();
 
 console.log(p1);
 console.log('\n\n');

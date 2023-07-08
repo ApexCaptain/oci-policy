@@ -1,1 +1,1 @@
-export type Verb = 'inspect' | 'read' | 'use' | 'manage';
+export type VerbType = 'inspect' | 'read' | 'use' | 'manage';
